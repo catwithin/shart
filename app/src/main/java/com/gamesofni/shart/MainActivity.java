@@ -1,11 +1,12 @@
-package com.example.shart;
+package com.gamesofni.shart;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.example.shart.databinding.ActivityMainBinding;
+import com.gamesofni.shart.databinding.ActivityMainBinding;
+
 
 public class MainActivity extends AppCompatActivity {
 

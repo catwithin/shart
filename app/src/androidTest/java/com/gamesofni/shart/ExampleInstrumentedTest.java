@@ -1,4 +1,4 @@
-package com.example.shart;
+package com.gamesofni.shart;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.example.shart", appContext.getPackageName());
+        assertEquals("com.gamesofni.shart", appContext.getPackageName());
     }
 }

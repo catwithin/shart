@@ -1,4 +1,4 @@
-package com.example.shart;
+package com.gamesofni.shart;
 
 import org.junit.Test;
 
