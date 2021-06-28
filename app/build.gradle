@@ -1,10 +1,17 @@
 plugins {
     id 'com.android.application'
+    id 'kotlin-android-extensions'
+    id 'kotlin-android'
+
 }
 
 def arcore_libpath = "${buildDir}/arcore-native"
 // Create a configuration to mark which aars to extract .so files from
 configurations { natives }
+
+
+
+def camerax_version = "1.0.0"
 
 
 android {
@@ -52,6 +59,9 @@ android {
     buildFeatures {
         viewBinding true
     }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 
 dependencies {
@@ -59,6 +69,8 @@ dependencies {
     implementation 'com.google.ar:core:1.25.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.google.android.material:material:1.3.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
     natives 'com.google.ar:core:1.25.0'
 
     implementation 'androidx.appcompat:appcompat:1.3.0'
@@ -68,6 +80,19 @@ dependencies {
     // https://github.com/bumptech/glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
+    // cameraX
+    // CameraX core library using camera2 implementation
+    implementation "androidx.camera:camera-camera2:$camerax_version"
+// CameraX Lifecycle Library
+    implementation "androidx.camera:camera-lifecycle:$camerax_version"
+// CameraX View class
+    implementation "androidx.camera:camera-view:1.0.0-alpha24"
+
+
+    // kotlin
+    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     //    tests
     testImplementation 'junit:junit:4.13'

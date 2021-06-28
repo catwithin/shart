@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         binding.addActivity.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), AugmentedImageActivity.class);
+            Intent intent = new Intent(v.getContext(), AddImageActivity.class);
             v.getContext().startActivity(intent);
         });
 
