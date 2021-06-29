@@ -7,6 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".AddImageActivity">
 
+    <TextView
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:layout_marginBottom="16px"
+        android:textColor="@color/black"
+        android:background="@color/white"
+        android:elevation="2dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/camera_capture_button"
+
+         android:layout_width="wrap_content"/>
+
     <Button
         android:id="@+id/camera_capture_button"
         android:layout_width="100dp"
@@ -14,6 +27,7 @@
         android:layout_marginBottom="50dp"
         android:scaleType="fitCenter"
         android:text="Take Photo"
+        android:background="@color/design_default_color_background"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

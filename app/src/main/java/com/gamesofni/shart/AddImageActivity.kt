@@ -12,11 +12,7 @@ import androidx.core.content.ContextCompat
 import java.util.concurrent.Executors
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.navigation.ui.AppBarConfiguration
-import com.gamesofni.shart.databinding.ActivityMainBinding
-import com.gamesofni.shart.databinding.ActivityThrowawayBinding
 import kotlinx.android.synthetic.main.activity_add_image.*
-import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
@@ -103,6 +99,20 @@ class AddImageActivity : AppCompatActivity() {
             // initialize for img capturing
             imageCapture = ImageCapture.Builder().build()
 
+            // create img analyzer to test luminosity
+            val imageAnalyzer = ImageAnalysis.Builder()
+                    .build()
+                    .also {
+                        it.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
+//                            Log.d(TAG, "Average luminosity: $luma")
+                            val intlum = luma.toInt()
+                            this@AddImageActivity.runOnUiThread(java.lang.Runnable {
+                                textView.text = "Average luminosity: $intlum"
+                            })
+//                            textView.setText("Average luminosity: $luma")
+                        })
+                    }
+
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
@@ -112,7 +122,7 @@ class AddImageActivity : AppCompatActivity() {
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                        this, cameraSelector, preview, imageCapture)
+                        this, cameraSelector, preview, imageCapture, imageAnalyzer)
 
             } catch(exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
@@ -164,6 +174,27 @@ class AddImageActivity : AppCompatActivity() {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     }
 
+    private class LuminosityAnalyzer(private val listener: LumaListener) : ImageAnalysis.Analyzer {
+
+        private fun ByteBuffer.toByteArray(): ByteArray {
+            rewind()    // Rewind the buffer to zero
+            val data = ByteArray(remaining())
+            get(data)   // Copy the buffer into a byte array
+            return data // Return the byte array
+        }
+
+        override fun analyze(image: ImageProxy) {
+
+            val buffer = image.planes[0].buffer
+            val data = buffer.toByteArray()
+            val pixels = data.map { it.toInt() and 0xFF }
+            val luma = pixels.average()
+
+            listener(luma)
+
+            image.close()
+        }
+    }
 
 
 }
