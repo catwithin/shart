@@ -1,4 +1,5 @@
 package com.gamesofni.shart
+import android.content.Intent
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -23,8 +24,6 @@ typealias LumaListener = (luma: Double) -> Unit
 
 class AddImageActivity : AppCompatActivity() {
 
-//    private lateinit var binding: ActivityAddImageActivityBinding
-
     private var imageCapture: ImageCapture? = null
 
     private lateinit var outputDirectory: File
@@ -33,8 +32,6 @@ class AddImageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_image)
-//        binding = ActivityMainBinding.inflate(layoutInflater)
-//        setContentView(binding.getRoot())
         // Request camera permissions
         if (allPermissionsGranted()) {
             startCamera()
@@ -45,6 +42,8 @@ class AddImageActivity : AppCompatActivity() {
 
         // Set up the listener for take photo button
         camera_capture_button.setOnClickListener { takePhoto() }
+
+        image_view_fit_to_scan.setImageResource(R.drawable.fit_to_scan)
 
         outputDirectory = getOutputDirectory()
 
@@ -77,6 +76,10 @@ class AddImageActivity : AppCompatActivity() {
                 val msg = "Photo capture succeeded: $savedUri"
                 Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                 Log.d(TAG, msg)
+                val intent = Intent(applicationContext, CropActivity::class.java)
+                intent.putExtra("fileUri", savedUri.toString())
+                startActivity(intent)
+
             }
         })
 

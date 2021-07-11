@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Shart</string>
     <string name="title_activity_add_image">AddImageActivity</string>
+    <string name="error_image_is_off_frame">err img off frame</string>
+    <string name="error_failed_to_clip_image">err failed to clip</string>
+    <string name="dialog_button_close">close</string>
+    <string name="dialog_title_result">result</string>
+    <string name="finished_cropping_button">finished cropping button</string>
 </resources>

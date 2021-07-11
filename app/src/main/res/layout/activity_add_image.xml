@@ -7,6 +7,15 @@
     android:layout_height="match_parent"
     tools:context=".AddImageActivity">
 
+    <ImageView
+        android:id="@+id/image_view_fit_to_scan"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:scaleType="fitCenter"
+        android:elevation="100dp"
+        />
+
     <TextView
         android:layout_height="wrap_content"
         android:id="@+id/textView"
@@ -35,7 +44,14 @@
 
     <androidx.camera.view.PreviewView
         android:id="@+id/viewFinder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/image_view_fit_to_scan"
+        app:layout_constraintStart_toStartOf="@id/image_view_fit_to_scan"
+        app:layout_constraintEnd_toEndOf="@id/image_view_fit_to_scan"
+        app:layout_constraintTop_toTopOf="@id/image_view_fit_to_scan"
+        />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
