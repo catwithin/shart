@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         tv.setText(stringFromJNI());
 
         binding.searchActivity.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), AugmentedImageActivity.class);
+            Intent intent = new Intent(v.getContext(), SearchActivity.class);
             v.getContext().startActivity(intent);
         });
 

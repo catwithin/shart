@@ -377,6 +377,7 @@ public class SearchActivity  extends AppCompatActivity implements GLSurfaceView.
             // load a pre-existing augmented image database.
 
             File file = new File(getApplicationContext().getFilesDir(),"sample_database.imgdb");
+            // open file from saved db file
             if(file.exists()){
                 try (InputStream is = new FileInputStream(file)) {
                     augmentedImageDatabase = AugmentedImageDatabase.deserialize(session, is);
@@ -388,6 +389,7 @@ public class SearchActivity  extends AppCompatActivity implements GLSurfaceView.
                     return false;
                 }
             }
+            // first-time load db from assets
             else{
                 try (InputStream is = getAssets().open("sample_database.imgdb")) {
                     augmentedImageDatabase = AugmentedImageDatabase.deserialize(session, is);
@@ -399,9 +401,6 @@ public class SearchActivity  extends AppCompatActivity implements GLSurfaceView.
                     return false;
                 }
             }
-
-
-
 
         }
 

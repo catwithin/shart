@@ -99,6 +99,16 @@ void AugmentedImageApplication::OnResume(void* env, void* context,
 
     ArAugmentedImageDatabase* ar_augmented_image_database =
         CreateAugmentedImageDatabase();
+
+    // debug:
+//    int number_of_images = 0;
+//    ArAugmentedImageDatabase_getNumImages(
+//        ar_session_,
+//        ar_augmented_image_database,
+//        &number_of_images
+//    );
+//    LOGI("imgs number %d", number_of_images);
+
     ArConfig_setAugmentedImageDatabase(ar_session_, ar_config,
                                        ar_augmented_image_database);
 
