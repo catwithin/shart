@@ -1,0 +1,11 @@
+Model Information:
+* title:	Owl House Albert Hilt
+* source:	https://sketchfab.com/3d-models/owl-house-albert-hilt-150dabb1328d404586851d0dd157edf8
+* author:	Platinum Parker (https://sketchfab.com/PlatinumParker)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Owl House Albert Hilt" (https://sketchfab.com/3d-models/owl-house-albert-hilt-150dabb1328d404586851d0dd157edf8) by Platinum Parker (https://sketchfab.com/PlatinumParker) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

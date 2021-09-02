@@ -1,0 +1,11 @@
+Model Information:
+* title:	sonic (morden) (not rigged)
+* source:	https://sketchfab.com/3d-models/sonic-morden-not-rigged-b8b18384b9bf43e487c911fa196b8f8c
+* author:	Sonicvoir (https://sketchfab.com/edieleneal22)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "sonic (morden) (not rigged)" (https://sketchfab.com/3d-models/sonic-morden-not-rigged-b8b18384b9bf43e487c911fa196b8f8c) by Sonicvoir (https://sketchfab.com/edieleneal22) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

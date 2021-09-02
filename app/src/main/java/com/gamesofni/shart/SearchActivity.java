@@ -305,7 +305,11 @@ public class SearchActivity  extends AppCompatActivity implements GLSurfaceView.
                 case PAUSED:
                     // When an image is in PAUSED state, but the camera is not PAUSED, it has been detected,
                     // but not yet tracked.
-                    String text = String.format("Detected Image %d", augmentedImage.getIndex());
+                    String text = String.format("There's something here, keep searching" +
+//                    );
+                            "\nMagic number: " +
+                            " %d",
+                        augmentedImage.getIndex());
                     messageSnackbarHelper.showMessage(this, text);
                     break;
 
