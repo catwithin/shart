@@ -1,15 +1,19 @@
 package com.gamesofni.shart
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.gamesofni.shart.data.Datasource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.ar.core.AugmentedImageDatabase
@@ -27,9 +31,12 @@ class CropActivity : AppCompatActivity() {
 
   private lateinit var session: Session
   private val cropButton by lazy { findViewById<ImageView>(R.id.crop) }
+  private val selectModelButton by lazy { findViewById<Button>(R.id.launch_pick_model) }
   private val parent by lazy { findViewById<ConstraintLayout>(R.id.container) }
   private val cropLayout by lazy { findViewById<CropLayout>(R.id.crop_view) }
   private val progressBar by lazy { findViewById<ProgressBar>(R.id.progress) }
+  private val SECOND_ACTIVITY_REQUEST_CODE = 0
+  private var selectedModel = null
 
   fun createSession(): Session {
     // Create a new ARCore session.
@@ -174,6 +181,35 @@ class CropActivity : AppCompatActivity() {
       progressBar.visibility = View.VISIBLE
       cropLayout.crop()
     })
+    cropButton.isEnabled = selectedModel != null
+
+
+    selectModelButton.setOnClickListener(View.OnClickListener {
+      val intent = Intent(this, PickModelActivity::class.java)
+      startActivityForResult(intent, SECOND_ACTIVITY_REQUEST_CODE)
+    })
+
   }
 
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+
+    // Check that it is the SecondActivity with an OK result
+    if (requestCode == SECOND_ACTIVITY_REQUEST_CODE) {
+      if (resultCode == Activity.RESULT_OK) {
+
+        // Get String data from Intent
+        val modelName = data!!.getStringExtra("modelName")
+        val model = Datasource().getByName(modelName!!)
+        // Set text view with string
+        val textView = findViewById<TextView>(R.id.model_preview_text)
+        textView.text = modelName
+        // se preview img
+        val imgView = findViewById<ImageView>(R.id.model_preview_img)
+        imgView.setImageDrawable(applicationContext.getDrawable(model.previewResourceId))
+
+        cropButton.isEnabled = true
+      }
+    }
+  }
 }
