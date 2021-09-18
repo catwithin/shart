@@ -21,6 +21,9 @@ class ShartViewModel (
         return model3dDao.getItem(id).asLiveData()
     }
 
+    suspend fun addShart(shart: ShartObject) {
+        shartObjectDao.insert(shart)
+    }
 //    fun addNewShartObject(itemName: String, itemPrice: String, itemCount: String) {
 //        val newShart = getNewShartEntry(itemName, itemPrice, itemCount)
 //        insertItem(newItem)

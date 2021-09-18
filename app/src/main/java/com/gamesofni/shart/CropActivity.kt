@@ -12,9 +12,10 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.gamesofni.shart.data.Datasource
+import com.gamesofni.shart.data.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.ar.core.ArCoreApk
@@ -24,6 +25,10 @@ import com.google.ar.core.Session
 import com.google.ar.core.exceptions.UnavailableException
 import com.takusemba.cropme.CropLayout
 import com.takusemba.cropme.OnCropListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -39,7 +44,7 @@ class CropActivity : AppCompatActivity() {
   private val cropLayout by lazy { findViewById<CropLayout>(R.id.crop_view) }
   private val progressBar by lazy { findViewById<ProgressBar>(R.id.progress) }
   private val SECOND_ACTIVITY_REQUEST_CODE = 0
-  private var selectedModel = null
+  private var selectedModel : Model3d? = null
 
   fun createSession(): Session {
     // Create a new ARCore session.
@@ -54,6 +59,13 @@ class CropActivity : AppCompatActivity() {
     // Configure the session.
     session.configure(config)
     return session
+  }
+
+  private val viewModel: ShartViewModel by viewModels<ShartViewModel>() {
+    ShartViewModelFactory(
+      (application as ShartApplication).database.model3dDao(),
+      (application as ShartApplication).database.shartObjectDao()
+    )
   }
 
   // Verify that ARCore is installed and using the current version.
@@ -143,6 +155,19 @@ class CropActivity : AppCompatActivity() {
         val toString = bitmap.hashCode().toString()
         val index = augmentedImageDatabase.addImage("user_added_" + toString, bitmap)
 
+        Log.e(TAG, "selectedModel:::::::" + selectedModel?.toString())
+        // save new shart to db
+        if (selectedModel != null) {
+          val shartNew = ShartObject(selectedModel!!.id, index, index, 0, false)
+          val applicationScope = CoroutineScope(SupervisorJob())
+
+          applicationScope.launch {
+            viewModel.addShart(shartNew)
+          }
+
+        }
+
+
         val config = Config(session)
         config.augmentedImageDatabase = augmentedImageDatabase
         session.configure(config)
@@ -166,7 +191,12 @@ class CropActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this@CropActivity)
             .setTitle(R.string.dialog_title_result)
             .setView(view)
-            .setPositiveButton(R.string.dialog_button_close) { dialog, _ -> dialog.dismiss() }
+            .setPositiveButton(R.string.dialog_button_close) { dialog, _ ->
+              dialog.dismiss()
+              val intent = Intent(this@CropActivity, MainActivity::class.java)
+              startActivity(intent)
+              finish()
+            }
             .show()
         session.close()
       }
@@ -210,6 +240,8 @@ class CropActivity : AppCompatActivity() {
         // se preview img
         val imgView = findViewById<ImageView>(R.id.model_preview_img)
         imgView.setImageDrawable(applicationContext.getDrawable(model.previewResourceId))
+
+        selectedModel = model
 
         cropButton.isEnabled = true
       }

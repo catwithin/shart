@@ -7,10 +7,6 @@ import java.sql.Date
 
 @Entity(tableName = "shart_object")
 data class ShartObject(
-
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-
     @ColumnInfo(name = "model_id")
     val modelId: Int,
 
@@ -28,4 +24,9 @@ data class ShartObject(
 
 //    @ColumnInfo(name = "added_on")
 //    val addedOn: Date?,
-)
+) {
+
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
+
+}
