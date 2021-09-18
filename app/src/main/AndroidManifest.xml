@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.gamesofni.shart">
 
     <uses-permission android:name="android.permission.CAMERA" />
@@ -28,9 +29,12 @@
 <!--            </intent-filter>-->
         </activity>
 
+<!--   tools:replace for graceful arcore updates     -->
         <meta-data
             android:name="com.google.ar.core"
-            android:value="required" />
+            android:value="required"
+            tools:replace="android:value"
+        />
 
         <activity
             android:name=".SearchActivity"

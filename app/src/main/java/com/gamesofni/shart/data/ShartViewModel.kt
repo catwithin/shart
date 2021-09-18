@@ -13,7 +13,8 @@ class ShartViewModel (
 
 
     // Cache all items form the database using LiveData.
-    val all3dModels: LiveData<List<Model3d>> = model3dDao.getItems().asLiveData()
+    public val all3dModels: List<Model3d> = model3dDao.getItems()
+//    public val all3dModels: LiveData<List<Model3d>> = model3dDao.getItems().asLiveData()
     val allShartObjects: LiveData<List<ShartObject>> = shartObjectDao.getItems().asLiveData()
 
     fun retrieveModel(id: Int): LiveData<Model3d> {

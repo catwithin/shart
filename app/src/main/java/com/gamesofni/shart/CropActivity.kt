@@ -1,6 +1,7 @@
 package com.gamesofni.shart
 
 import android.app.Activity
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -16,9 +17,11 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.gamesofni.shart.data.Datasource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.ar.core.ArCoreApk
 import com.google.ar.core.AugmentedImageDatabase
 import com.google.ar.core.Config
 import com.google.ar.core.Session
+import com.google.ar.core.exceptions.UnavailableException
 import com.takusemba.cropme.CropLayout
 import com.takusemba.cropme.OnCropListener
 import java.io.File
