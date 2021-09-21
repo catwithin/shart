@@ -17,7 +17,8 @@ interface Model3dDao {
 
 
     @Query("SELECT * from model3d WHERE id = :id")
-    fun getItem(id: Int): Flow<Model3d>
+    fun getItem(id: Int): Model3d
+//    fun getItem(id: Int): Flow<Model3d>
 
     @Query("SELECT * from model3d ORDER BY name ASC")
     fun getItems(): List<Model3d>

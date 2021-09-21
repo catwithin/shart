@@ -9,14 +9,12 @@ import com.gamesofni.shart.common.helpers.TrackingStateHelper
 import com.gamesofni.shart.common.rendering.BackgroundRenderer
 import com.gamesofni.shart.rendering.AugmentedImageRenderer
 import android.os.Bundle
-import com.gamesofni.shart.R
 import com.bumptech.glide.Glide
 import com.google.ar.core.ArCoreApk.InstallStatus
 import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException
 import com.google.ar.core.exceptions.UnavailableApkTooOldException
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException
-import com.gamesofni.shart.SearchActivity
 import com.google.ar.core.exceptions.CameraNotAvailableException
 import android.widget.Toast
 import com.gamesofni.shart.common.helpers.FullScreenHelper
@@ -29,9 +27,16 @@ import android.util.Log
 import android.util.Pair
 import android.view.View
 import android.widget.ImageView
-import com.gamesofni.shart.AugmentedImageActivity
+import androidx.activity.viewModels
 import com.gamesofni.shart.common.helpers.CameraPermissionHelper
+import com.gamesofni.shart.data.Model3d
+import com.gamesofni.shart.data.ShartObject
+import com.gamesofni.shart.data.ShartViewModel
+import com.gamesofni.shart.data.ShartViewModelFactory
 import com.google.ar.core.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
@@ -50,7 +55,10 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
     private var displayRotationHelper: DisplayRotationHelper? = null
     private val trackingStateHelper = TrackingStateHelper(this)
     private val backgroundRenderer = BackgroundRenderer()
-    private val augmentedImageRenderer = AugmentedImageRenderer()
+
+    private lateinit var models : List<Model3d>
+    private lateinit var sharts : List<ShartObject>
+
     private var shouldConfigureSession = false
 
     // Augmented image configuration and rendering.
@@ -61,8 +69,26 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
     // the
     // database.
     private val augmentedImageMap: MutableMap<Int, Pair<AugmentedImage, Anchor>> = HashMap()
+
+    private val viewModel: ShartViewModel by viewModels<ShartViewModel>() {
+        ShartViewModelFactory(
+            (application as ShartApplication).database.model3dDao(),
+            (application as ShartApplication).database.shartObjectDao()
+        )
+    }
+    private lateinit var  augmentedImageRenderer : AugmentedImageRenderer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val applicationScope = CoroutineScope(SupervisorJob())
+        applicationScope.launch {
+            models = viewModel.all3dModels
+            sharts = viewModel.allShartObjects
+//            Log.e(TAG, "models::::" + models)
+            augmentedImageRenderer = AugmentedImageRenderer(models)
+        }
+
         setContentView(R.layout.activity_search)
         surfaceView = findViewById(R.id.surfaceview)
         displayRotationHelper = DisplayRotationHelper( /*context=*/this)
@@ -228,6 +254,7 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
             // Obtain the current frame from ARSession. When the configuration is set to
             // UpdateMode.BLOCKING (it is by default), this will throttle the rendering to the
             // camera framerate.
+            session!!.resume()
             val frame = session!!.update()
             val camera = frame.camera
 
@@ -250,7 +277,11 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
             frame.lightEstimate.getColorCorrection(colorCorrectionRgba, 0)
 
             // Visualize augmented images.
-            drawAugmentedImages(frame, projmtx, viewmtx, colorCorrectionRgba)
+            val applicationScope = CoroutineScope(SupervisorJob())
+
+            applicationScope.launch {
+                drawAugmentedImages(frame, projmtx, viewmtx, colorCorrectionRgba)
+            }
         } catch (t: Throwable) {
             // Avoid crashing the application due to unhandled exceptions.
             Log.e(TAG, "Exception on the OpenGL thread", t)
@@ -264,9 +295,10 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
             messageSnackbarHelper.showError(this, "Could not setup augmented image database")
         }
         session!!.configure(config)
+        session!!.resume()
     }
 
-    private fun drawAugmentedImages(
+    suspend private fun drawAugmentedImages(
         frame: Frame, projmtx: FloatArray, viewmtx: FloatArray, colorCorrectionRgba: FloatArray
     ) {
         val updatedAugmentedImages = frame.getUpdatedTrackables(
@@ -311,13 +343,30 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
             val augmentedImage = pair.first
             val centerAnchor = augmentedImageMap[augmentedImage.index]!!.second
             when (augmentedImage.trackingState) {
-                TrackingState.TRACKING -> augmentedImageRenderer.draw(
-                    viewmtx, projmtx, augmentedImage, centerAnchor, colorCorrectionRgba
-                )
+
+                TrackingState.TRACKING -> {
+//                    Log.e(TAG, "augmentedImage.index:::" + augmentedImage.index)
+                    val model = getModelByAugImgId(augmentedImage.index)
+                    if (model != null) {
+                        augmentedImageRenderer.draw(
+                            viewmtx, projmtx, augmentedImage, model,  centerAnchor,
+                            colorCorrectionRgba
+                        )
+                    }
+                }
                 else -> {
                 }
             }
         }
+    }
+
+    private fun getModelByAugImgId(index: Int): Model3d? {
+        val shart = sharts.filter { s -> s.indexAugmentedImg == index }.firstOrNull()
+        if (shart == null) {
+            return null
+        }
+        val model = models.filter { m -> m.id == shart.modelId  }.firstOrNull()
+        return model
     }
 
     private fun setupAugmentedImageDatabase(config: Config): Boolean {
@@ -343,6 +392,7 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
             val file = File(applicationContext.filesDir, "sample_database.imgdb")
             // open file from saved db file
             if (file.exists()) {
+                Log.e(TAG, "used db from files")
                 try {
                     FileInputStream(file).use { `is` ->
                         augmentedImageDatabase = AugmentedImageDatabase.deserialize(session, `is`)
@@ -354,6 +404,8 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
                     return false
                 }
             } else {
+                Log.e(TAG, "loaded db from assets")
+
                 try {
                     assets.open("sample_database.imgdb").use { `is` ->
                         augmentedImageDatabase = AugmentedImageDatabase.deserialize(session, `is`)

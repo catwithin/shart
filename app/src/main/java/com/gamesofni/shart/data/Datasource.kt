@@ -45,7 +45,7 @@ abstract class ShartRoomDatabase : RoomDatabase() {
         private val scope: CoroutineScope
     ) : RoomDatabase.Callback() {
 
-        override fun onOpen(db: SupportSQLiteDatabase) {
+        override fun onCreate(db: SupportSQLiteDatabase) {
 //        override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
             INSTANCE?.let { database ->
@@ -65,58 +65,71 @@ abstract class ShartRoomDatabase : RoomDatabase() {
                 Model3d(0,
                 "Sonic",
                 R.drawable.sonic_preview,
-                "/assets/models/sonic/sonic.obj",
-                ""),
+                "models/sonic/sonic.obj",
+                "models/sonic/textures/Material_baseColor.png"),
 
                 Model3d(1,
                     "Rafaj Mulberry Warlock", R.drawable.rafaj_preview,
-                    "/assets/models/rafaj_the_mulberry_warlock/rafaj.obj",
-                    ""
+                    "models/rafaj_the_mulberry_warlock/rafaj.obj",
+                    "models/rafaj_the_mulberry_warlock/textures/Rafaj1_baseColor.png"
                 ),
 
                 Model3d(2,
                     "Tibetan fox",
                     R.drawable.tibetan_fox_preview,
-                    "/assets/models/Tibetan_Hill_Fox/tibetan_fox2" +
+                    "models/Tibetan_Hill_Fox/tibetan_fox2" +
                             ".obj",
-                    ""
+                    "models/Tibetan_Hill_Fox/Tibetan_Hill_Fox_dif.jpg"
                 ),
 
                 Model3d(3,
-                    "Low poly fox", R.drawable.low_fox_preview, "/assets/models/low_fox/low_fox.obj",
-                    ""
+                    "Low poly fox", R.drawable.low_fox_preview, "models/low_fox/low_fox.obj",
+                    "models/low_fox/texture.png"
                 ),
 
                 Model3d(4,
-                    "Cyberpunk Apartment", R.drawable.apt_preview, "/assets/models/cyberpunk/apt.obj" +
-                            ".obj",
-                    ""
+                    "Cyberpunk Apartment", R.drawable.apt_preview, "models/cyberpunk/apt.obj",
+                    "models/cyberpunk/textures/UV_TEST_baseColor.png"
                 ),
 
                 Model3d(5,
                     "Lighthouse",
                     R.drawable.lighthouse_preview,
-                    "/assets/models/lighthouse/lighthouse_v.obj",
-                    ""
+                    "models/lighthouse/lighthouse_v.obj",
+                    "models/lighthouse/textures/lighthouse_low_02_lh_Diffuse2.png"
                 ),
 
                 Model3d(6,
                     "King sitting on the rock", R.drawable.king_sitting_preview,
-                    "/assets/models/the-owl-house-king/king.obj",
-                    ""
+                    "models/the-owl-house-king/king.obj",
+                    "models/the-owl-house-king/textures/initialShadingGroup_baseColor.png"
                 ),
 
                 Model3d(7,
-                    "King standing", R.drawable.king_standing_preview, "/assets/models/king/king2" +
-                            ".obj",
-                    ""
+                    "King standing", R.drawable.king_standing_preview,
+                    "models/king/king2.obj",
+                    "models/king/textures/king_baseColor.png"
                 ),
 
                 Model3d(8,
                     "Owl Albert", R.drawable.owl_albert_preview,
-                    "/assets/models/owl_house_albert_hilt/owl_staff_sm.obj",
-                    ""
+                    "models/owl_house_albert_hilt/owl_staff_sm.obj",
+                    "models/the-owl-house-king/textures/initialShadingGroup_baseColor.png"
                 ),
+            )
+
+            shartObjectDao.deleteAll()
+
+
+            shartObjectDao.insertAll(
+//                ShartObject(4, 28, 28, 0, false),
+//                ShartObject(17, 34, 34, 0, false),
+//                ShartObject(3, 36, 36, 0, false),
+//                ShartObject(8, 27, 27, 0, false),
+//                ShartObject(1, 32, 32, 0, false),
+//                ShartObject(5, 33, 33, 0, false),
+//                ShartObject(6, 39, 39, 0, false),
+                ShartObject(3, 0, 0, 0, false),
             )
 
         }

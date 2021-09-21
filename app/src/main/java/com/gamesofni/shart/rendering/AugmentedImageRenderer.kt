@@ -3,13 +3,15 @@ package com.gamesofni.shart.rendering
 import android.content.Context
 import android.util.Log
 import com.gamesofni.shart.common.rendering.ObjectRenderer
+import com.gamesofni.shart.data.Model3d
 import kotlin.Throws
 import com.google.ar.core.AugmentedImage
 import com.google.ar.core.Anchor
 import java.io.IOException
 
 /** Renders an augmented image.  */
-class AugmentedImageRenderer  //  private final ObjectRenderer pub = new ObjectRenderer();
+class AugmentedImageRenderer(
+    private val models: List<Model3d>)  //  private final ObjectRenderer pub = new ObjectRenderer();
 //  private final ObjectRenderer bot_tall = new ObjectRenderer();
 //  private final ObjectRenderer ship = new ObjectRenderer();
 //  private final ObjectRenderer matilda = new ObjectRenderer();
@@ -19,15 +21,21 @@ class AugmentedImageRenderer  //  private final ObjectRenderer pub = new ObjectR
     //  private final ObjectRenderer imageFrameUpperRight = new ObjectRenderer();
     //  private final ObjectRenderer imageFrameLowerLeft = new ObjectRenderer();
     //  private final ObjectRenderer imageFrameLowerRight = new ObjectRenderer();
-    private val dragon_yashur = ObjectRenderer()
-    private val tibetan_fox = ObjectRenderer()
-    private val sonic = ObjectRenderer()
-    private val low_fox = ObjectRenderer()
-    private val apt = ObjectRenderer()
-    private val lighthouse = ObjectRenderer()
-    private val king = ObjectRenderer()
+
+
+
+//    private val dragon_yashur = ObjectRenderer()
+//    private val tibetan_fox = ObjectRenderer()
+//    private val sonic = ObjectRenderer()
+//    private val low_fox = ObjectRenderer()
+//    private val apt = ObjectRenderer()
+//    private val lighthouse = ObjectRenderer()
+//    private val king = ObjectRenderer()
     private val king_standing = ObjectRenderer()
-    private val owl = ObjectRenderer()
+//    private val owl = ObjectRenderer()
+
+    private var renderers = mutableListOf<ObjectRenderer>()
+
     @Throws(IOException::class)
     fun createOnGlThread(context: Context?) {
 
@@ -46,64 +54,99 @@ class AugmentedImageRenderer  //  private final ObjectRenderer pub = new ObjectR
 //            "/Boot_Finaal_emissive.jpeg");
 //    ship.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f);
 //    ship.setBlendMode(BlendMode.AlphaBlending);
-        dragon_yashur.createOnGlThread(
-            context, "models/rafaj_the_mulberry_warlock/rafaj.obj", "models" +
-                    "/rafaj_the_mulberry_warlock/textures/Rafaj1_baseColor.png"
-        )
-        dragon_yashur.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f)
-        dragon_yashur.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
-        Log.d("Augm", "creating tibetan fox")
-        tibetan_fox.createOnGlThread(
-            context, "models/Tibetan_Hill_Fox/tibetan_fox2.obj", "models/Tibetan_Hill_Fox" +
-                    "/Tibetan_Hill_Fox_dif.jpg"
-        )
-        tibetan_fox.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f)
-        tibetan_fox.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
-        Log.d("Augm", "creating apt")
-        apt.createOnGlThread(
-            context, "models/cyberpunk/apt.obj", "models/cyberpunk/textures" +
-                    "/UV_TEST_baseColor.png"
-        )
-        apt.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f)
-        apt.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
-        Log.d("Augm", "creating sonic")
-        sonic.createOnGlThread(
-            context, "models/sonic/sonic.obj", "models/sonic/textures" +
-                    "/Material_baseColor.png"
-        )
-        sonic.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f)
-        sonic.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
-        Log.d("Augm", "creating low_fox")
-        low_fox.createOnGlThread(
-            context, "models/low_fox/low_fox.obj", "models/low_fox" +
-                    "/texture.png"
-        )
-        low_fox.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f)
-        low_fox.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
-        Log.d("Augm", "creating lighthouse")
-        lighthouse.createOnGlThread(
-            context, "models/lighthouse/lighthouse_v.obj", "models/lighthouse/textures" +
-                    "/lighthouse_low_02_lh_Diffuse2.png"
-        )
-        lighthouse.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f)
-        lighthouse.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
-        Log.d("Augm", "creating king")
-        king.createOnGlThread(
-            context, "models/the-owl-house-king/king.obj", "models/the-owl-house-king/textures" +
-                    "/initialShadingGroup_baseColor.png"
-        )
-        king.setMaterialProperties(0.0f, 3.5f, 0.2f, 0.1f)
-        king.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
-        Log.d("Augm", "creating owl")
-        owl.createOnGlThread(
-            context,
-            "models/owl_house_albert_hilt/owl_staff_sm.obj",
-            "models/owl_house_albert_hilt" +
+
+//        Log.e(TAG, "IN::: createOnGlThread::::")
+//        Log.e(TAG, "models::::" + models.get(0))
+
+        for (m in models) {
+            val renderer = ObjectRenderer()
+            renderer.createOnGlThread(
+                context, m.filenameObj, m.textureResourcePath
+            )
+            // TODO: also save this info in model
+            renderer.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f)
+            renderer.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
+            renderers.add(renderer)
+        }
+
+
+
+
+//        dragon_yashur.createOnGlThread(
+//            context, "models/rafaj_the_mulberry_warlock/rafaj.obj", "models" +
+//                    "/rafaj_the_mulberry_warlock/textures/Rafaj1_baseColor.png"
+//        )
+//        dragon_yashur.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f)
+//        dragon_yashur.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
+
+//        Log.d("Augm", "creating tibetan fox")
+//        tibetan_fox.createOnGlThread(
+//            context, "models/Tibetan_Hill_Fox/tibetan_fox2.obj", "models/Tibetan_Hill_Fox" +
+//                    "/Tibetan_Hill_Fox_dif.jpg"
+//        )
+//        tibetan_fox.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f)
+//        tibetan_fox.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
+//        Log.d("Augm", "creating apt")
+//        apt.createOnGlThread(
+//            context, "models/cyberpunk/apt.obj", "models/cyberpunk/textures" +
+//                    "/UV_TEST_baseColor.png"
+//        )
+//        apt.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f)
+//        apt.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
+//        Log.d("Augm", "creating sonic")
+//        sonic.createOnGlThread(
+//            context, "models/sonic/sonic.obj", "models/sonic/textures" +
+//                    "/Material_baseColor.png"
+//        )
+//        sonic.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f)
+//        sonic.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
+//        Log.d("Augm", "creating low_fox")
+//        low_fox.createOnGlThread(
+//            context, "models/low_fox/low_fox.obj", "models/low_fox" +
+//                    "/texture.png"
+//        )
+//        low_fox.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f)
+//        low_fox.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
+//        Log.d("Augm", "creating lighthouse")
+//        lighthouse.createOnGlThread(
+//            context, "models/lighthouse/lighthouse_v.obj", "models/lighthouse/textures" +
+//                    "/lighthouse_low_02_lh_Diffuse2.png"
+//        )
+//        lighthouse.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f)
+//        lighthouse.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
+//        Log.d("Augm", "creating king")
+//        king.createOnGlThread(
+//            context, "models/the-owl-house-king/king.obj", "models/the-owl-house-king/textures" +
+//                    "/initialShadingGroup_baseColor.png"
+//        )
+//        king.setMaterialProperties(0.0f, 3.5f, 0.2f, 0.1f)
+//        king.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
+//        Log.d("Augm", "creating owl")
+//        owl.createOnGlThread(
+//            context,
+//            "models/owl_house_albert_hilt/owl_staff_sm.obj",
+//            "models/owl_house_albert_hilt" +
+//                    "/textures" +
+//                    "/wire_177088027_baseColor.png"
+//        )
+//        owl.setMaterialProperties(0.0f, 3.5f, 0.2f, 1.0f)
+//        owl.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
+
+        Log.d("Augm", "creating another")
+        king_standing.createOnGlThread(
+            context, "models/king/king2.obj", "models/king" +
                     "/textures" +
-                    "/wire_177088027_baseColor.png"
+                    "/king_baseColor.png"
         )
-        owl.setMaterialProperties(0.0f, 3.5f, 0.2f, 1.0f)
-        owl.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
+        king_standing.setMaterialProperties(0.0f, 3.5f, 0.2f, 1.0f)
+        king_standing.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
+
+
+
+
+
+
+
 
         // default angles
 //    Log.d("Augm", "creating angles");
@@ -116,14 +159,7 @@ class AugmentedImageRenderer  //  private final ObjectRenderer pub = new ObjectR
 //        context, "models/frame_upper_right.obj", "models/frame_base.png");
 //    imageFrameUpperRight.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f);
 //    imageFrameUpperRight.setBlendMode(BlendMode.AlphaBlending);
-        Log.d("Augm", "creating another")
-        king_standing.createOnGlThread(
-            context, "models/king/king2.obj", "models/king" +
-                    "/textures" +
-                    "/king_baseColor.png"
-        )
-        king_standing.setMaterialProperties(0.0f, 3.5f, 0.2f, 1.0f)
-        king_standing.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
+
 
 
 // works, but too big
@@ -148,6 +184,7 @@ class AugmentedImageRenderer  //  private final ObjectRenderer pub = new ObjectR
         viewMatrix: FloatArray?,
         projectionMatrix: FloatArray?,
         augmentedImage: AugmentedImage,
+        model: Model3d,
         centerAnchor: Anchor,
         colorCorrectionRgba: FloatArray?
     ) {
@@ -184,23 +221,37 @@ class AugmentedImageRenderer  //  private final ObjectRenderer pub = new ObjectR
 
 //    worldBoundaryPoses[0].toMatrix(modelMatrix, 0);
         anchorPose.toMatrix(modelMatrix, 0)
-        var chosenModel: ObjectRenderer? = null
-        chosenModel = when (augmentedImage.index) {
-            28 -> apt //apt
-            29 -> tibetan_fox // tibetan_fox
-            34 -> sonic //sonic
-            36 -> low_fox // low_fox
-            27 -> owl
-            32 -> dragon_yashur
-            33 -> lighthouse
-            39 -> king
-            else -> king_standing
-        }
-        if (chosenModel == null) {
+//        var chosenModel: ObjectRenderer? = null
+
+        val index = models.indexOf(model)
+//        Log.e(TAG, "model:::" + model)
+//        Log.e(TAG, "index:::" + index)
+        if (index == -1) {
             return
         }
-        chosenModel.updateModelMatrix(modelMatrix, scaleFactor)
-        chosenModel.draw(viewMatrix, projectionMatrix, colorCorrectionRgba)
+
+//        chosenModel = when (augmentedImage.index) {
+//            28 -> apt //apt
+//            29 -> tibetan_fox // tibetan_fox
+//            34 -> sonic //sonic
+//            36 -> low_fox // low_fox
+//            27 -> owl
+//            32 -> dragon_yashur
+//            33 -> lighthouse
+//            39 -> king
+//            else -> king_standing
+//        }
+
+//        val chosenRenderer = renderers.get(index)
+//        Log.e(TAG, "chosenRenderer:::" + chosenRenderer)
+
+        king_standing.updateModelMatrix(modelMatrix, scaleFactor)
+        king_standing.draw(viewMatrix, projectionMatrix, colorCorrectionRgba)
+
+//        renderers.get(index).updateModelMatrix(modelMatrix, scaleFactor)
+//        renderers.get(index).draw(viewMatrix, projectionMatrix, colorCorrectionRgba)
+
+
 
 //    worldBoundaryPoses[1].toMatrix(modelMatrix, 0);
 //    imageFrameUpperRight.updateModelMatrix(modelMatrix, scaleFactor);
