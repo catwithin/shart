@@ -48,11 +48,11 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
     // Rendering. The Renderers are created here, and initialized when the GL surface is created.
     private lateinit var surfaceView: GLSurfaceView
     private lateinit var fitToScanView: ImageView
-    private var glideRequestManager: RequestManager? = null
+    private lateinit var glideRequestManager: RequestManager
     private var installRequested = false
     private var session: Session? = null
     private val messageSnackbarHelper = SnackbarHelper()
-    private var displayRotationHelper: DisplayRotationHelper? = null
+    private lateinit var displayRotationHelper: DisplayRotationHelper
     private val trackingStateHelper = TrackingStateHelper(this)
     private val backgroundRenderer = BackgroundRenderer()
 
@@ -100,11 +100,13 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
         surfaceView.setRenderer(this)
         surfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY)
         surfaceView.setWillNotDraw(false)
+
         fitToScanView = findViewById(R.id.image_view_fit_to_scan)
         glideRequestManager = Glide.with(this)
-        glideRequestManager!!
+        glideRequestManager
             .load(Uri.parse("file:///android_asset/fit_to_scan.png"))
             .into(fitToScanView)
+
         installRequested = false
     }
 
@@ -180,9 +182,9 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
             session = null
             return
         }
-        surfaceView!!.onResume()
-        displayRotationHelper!!.onResume()
-        fitToScanView!!.visibility = View.VISIBLE
+        surfaceView.onResume()
+        displayRotationHelper.onResume()
+        fitToScanView.visibility = View.VISIBLE
     }
 
     public override fun onPause() {
@@ -191,8 +193,8 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
             // Note that the order matters - GLSurfaceView is paused first so that it does not try
             // to query the session. If Session is paused before GLSurfaceView, GLSurfaceView may
             // still call session.update() and get a SessionPausedException.
-            displayRotationHelper!!.onPause()
-            surfaceView!!.onPause()
+            displayRotationHelper.onPause()
+            surfaceView.onPause()
             session!!.pause()
         }
     }
@@ -222,6 +224,7 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceCreated(gl: GL10, config: EGLConfig) {
+//                    Log.e(TAG, "SearchActivity:::in onSurfaceCreated::::")
         GLES20.glClearColor(0.1f, 0.1f, 0.1f, 1.0f)
 
         // Prepare the rendering objects. This involves reading shaders, so may throw an IOException.
@@ -235,7 +238,7 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceChanged(gl: GL10, width: Int, height: Int) {
-        displayRotationHelper!!.onSurfaceChanged(width, height)
+        displayRotationHelper.onSurfaceChanged(width, height)
         GLES20.glViewport(0, 0, width, height)
     }
 
@@ -247,14 +250,13 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
         }
         // Notify ARCore session that the view size changed so that the perspective matrix and
         // the video background can be properly adjusted.
-        displayRotationHelper!!.updateSessionIfNeeded(session)
+        displayRotationHelper.updateSessionIfNeeded(session)
         try {
             session!!.setCameraTextureName(backgroundRenderer.textureId)
 
             // Obtain the current frame from ARSession. When the configuration is set to
             // UpdateMode.BLOCKING (it is by default), this will throttle the rendering to the
             // camera framerate.
-            session!!.resume()
             val frame = session!!.update()
             val camera = frame.camera
 
@@ -277,11 +279,8 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
             frame.lightEstimate.getColorCorrection(colorCorrectionRgba, 0)
 
             // Visualize augmented images.
-            val applicationScope = CoroutineScope(SupervisorJob())
+            drawAugmentedImages(frame, projmtx, viewmtx, colorCorrectionRgba)
 
-            applicationScope.launch {
-                drawAugmentedImages(frame, projmtx, viewmtx, colorCorrectionRgba)
-            }
         } catch (t: Throwable) {
             // Avoid crashing the application due to unhandled exceptions.
             Log.e(TAG, "Exception on the OpenGL thread", t)
@@ -295,10 +294,9 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
             messageSnackbarHelper.showError(this, "Could not setup augmented image database")
         }
         session!!.configure(config)
-        session!!.resume()
     }
 
-    suspend private fun drawAugmentedImages(
+    private fun drawAugmentedImages(
         frame: Frame, projmtx: FloatArray, viewmtx: FloatArray, colorCorrectionRgba: FloatArray
     ) {
         val updatedAugmentedImages = frame.getUpdatedTrackables(
@@ -321,8 +319,7 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
                 }
                 TrackingState.TRACKING -> {
                     // Have to switch to UI Thread to update View.
-                    runOnUiThread(
-                        Runnable { fitToScanView!!.visibility = View.GONE })
+                    runOnUiThread { fitToScanView.visibility = View.GONE }
 
                     // Create a new anchor for newly found images.
                     if (!augmentedImageMap.containsKey(augmentedImage.index)) {
@@ -341,11 +338,13 @@ class SearchActivity() : AppCompatActivity(), GLSurfaceView.Renderer {
         // Draw all images in augmentedImageMap
         for (pair: Pair<AugmentedImage, Anchor> in augmentedImageMap.values) {
             val augmentedImage = pair.first
+            // TODO: why not pair.second ?
             val centerAnchor = augmentedImageMap[augmentedImage.index]!!.second
             when (augmentedImage.trackingState) {
 
                 TrackingState.TRACKING -> {
 //                    Log.e(TAG, "augmentedImage.index:::" + augmentedImage.index)
+//                    Log.e(TAG, "SearchAct:::decided to draw:::::")
                     val model = getModelByAugImgId(augmentedImage.index)
                     if (model != null) {
                         augmentedImageRenderer.draw(
