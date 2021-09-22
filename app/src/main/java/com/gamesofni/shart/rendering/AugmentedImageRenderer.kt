@@ -2,16 +2,20 @@ package com.gamesofni.shart.rendering
 
 import android.content.Context
 import android.util.Log
+import com.gamesofni.shart.SearchActivity
 import com.gamesofni.shart.common.rendering.ObjectRenderer
 import com.gamesofni.shart.data.Model3d
 import kotlin.Throws
 import com.google.ar.core.AugmentedImage
 import com.google.ar.core.Anchor
 import java.io.IOException
+import com.google.ar.core.Pose;
 
 /** Renders an augmented image.  */
 class AugmentedImageRenderer(
-    private val models: List<Model3d>)  //  private final ObjectRenderer pub = new ObjectRenderer();
+    private val models: List<Model3d>)
+
+//  private final ObjectRenderer pub = new ObjectRenderer();
 //  private final ObjectRenderer bot_tall = new ObjectRenderer();
 //  private final ObjectRenderer ship = new ObjectRenderer();
 //  private final ObjectRenderer matilda = new ObjectRenderer();
@@ -31,14 +35,14 @@ class AugmentedImageRenderer(
 //    private val apt = ObjectRenderer()
 //    private val lighthouse = ObjectRenderer()
 //    private val king = ObjectRenderer()
-    private val king_standing = ObjectRenderer()
+//    private val king_standing = ObjectRenderer()
 //    private val owl = ObjectRenderer()
 
     private var renderers = mutableListOf<ObjectRenderer>()
 
     @Throws(IOException::class)
-    fun createOnGlThread(context: Context?) {
-
+    fun createOnGlThread(context: Context) {
+//        Log.e(TAG, "AugmentedImgRenderer:::in createOnGLThread::::")
         // needs experimenting with size probably
 //    Log.d("Augm", "creating matilda");
 //    matilda.createOnGlThread(
@@ -132,14 +136,14 @@ class AugmentedImageRenderer(
 //        owl.setMaterialProperties(0.0f, 3.5f, 0.2f, 1.0f)
 //        owl.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
 
-        Log.d("Augm", "creating another")
-        king_standing.createOnGlThread(
-            context, "models/king/king2.obj", "models/king" +
-                    "/textures" +
-                    "/king_baseColor.png"
-        )
-        king_standing.setMaterialProperties(0.0f, 3.5f, 0.2f, 1.0f)
-        king_standing.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
+//        Log.d("Augm", "creating another")
+//        king_standing.createOnGlThread(
+//            context, "models/king/king2.obj", "models/king" +
+//                    "/textures" +
+//                    "/king_baseColor.png"
+//        )
+//        king_standing.setMaterialProperties(0.0f, 3.5f, 0.2f, 1.0f)
+//        king_standing.setBlendMode(ObjectRenderer.BlendMode.AlphaBlending)
 
 
 
@@ -181,12 +185,12 @@ class AugmentedImageRenderer(
     }
 
     fun draw(
-        viewMatrix: FloatArray?,
-        projectionMatrix: FloatArray?,
+        viewMatrix: FloatArray,
+        projectionMatrix: FloatArray,
         augmentedImage: AugmentedImage,
-        model: Model3d,
+        model: Model3d?,
         centerAnchor: Anchor,
-        colorCorrectionRgba: FloatArray?
+        colorCorrectionRgba: FloatArray
     ) {
 
         // coloring of the default frame
@@ -211,21 +215,28 @@ class AugmentedImageRenderer(
 //          0.0f,
 //          0.5f * augmentedImage.getExtentZ()) // lower left
 //    };
-        val anchorPose = centerAnchor.pose
+        val anchorPose : Pose = centerAnchor.pose
         //    Pose[] worldBoundaryPoses = new Pose[4];
 //    for (int i = 0; i < 4; ++i) {
 //      worldBoundaryPoses[i] = anchorPose.compose(localBoundaryPoses[i]);
 //    }
         val scaleFactor = 1.0f
         val modelMatrix = FloatArray(16)
-
+//                Log.e(TAG, "modelMatrix::BEFORE:" + modelMatrix)
 //    worldBoundaryPoses[0].toMatrix(modelMatrix, 0);
         anchorPose.toMatrix(modelMatrix, 0)
 //        var chosenModel: ObjectRenderer? = null
+//        Log.e(TAG, "modelMatrix::AFTER:" + modelMatrix)
 
+//        king_standing.updateModelMatrix(modelMatrix, scaleFactor)
+//        king_standing.draw(viewMatrix, projectionMatrix, colorCorrectionRgba)
+
+        // TODO: pass only id, save map { id -> model }
         val index = models.indexOf(model)
+
 //        Log.e(TAG, "model:::" + model)
 //        Log.e(TAG, "index:::" + index)
+
         if (index == -1) {
             return
         }
@@ -242,14 +253,10 @@ class AugmentedImageRenderer(
 //            else -> king_standing
 //        }
 
-//        val chosenRenderer = renderers.get(index)
+        val chosenRenderer = renderers.get(index)
 //        Log.e(TAG, "chosenRenderer:::" + chosenRenderer)
-
-        king_standing.updateModelMatrix(modelMatrix, scaleFactor)
-        king_standing.draw(viewMatrix, projectionMatrix, colorCorrectionRgba)
-
-//        renderers.get(index).updateModelMatrix(modelMatrix, scaleFactor)
-//        renderers.get(index).draw(viewMatrix, projectionMatrix, colorCorrectionRgba)
+        chosenRenderer.updateModelMatrix(modelMatrix, scaleFactor)
+        chosenRenderer.draw(viewMatrix, projectionMatrix, colorCorrectionRgba)
 
 
 
