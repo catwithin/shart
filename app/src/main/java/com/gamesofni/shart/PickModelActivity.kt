@@ -15,10 +15,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.gamesofni.shart.data.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_pick_model.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class PickModelActivity : AppCompatActivity() {
+    private var id: Int? = null
     var tracker: SelectionTracker<Long>? = null
-    var name: String? = null
+//    var name: String? = null
     private lateinit var doneButton: FloatingActionButton
     private lateinit var models: List<Model3d>
 
@@ -38,14 +42,17 @@ class PickModelActivity : AppCompatActivity() {
         doneButton.setOnClickListener{
 //            Toast.makeText(this, "FAB is clicked...", Toast.LENGTH_LONG).show()
             val intent = Intent()
-            intent.putExtra("modelName", name)
+            intent.putExtra("modelId", id)
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
         doneButton.isEnabled = tracker?.selection?.size() == 1
 
         // Initialize data.
-        models = viewModel.all3dModels
+//        val applicationScope = CoroutineScope(SupervisorJob())
+//        applicationScope.launch {
+            models = viewModel.all3dModels
+//        }
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
 
@@ -72,7 +79,7 @@ class PickModelActivity : AppCompatActivity() {
                     super.onSelectionChanged()
                     val items = tracker?.selection!!.size()
                     if (items == 1) {
-                        name = models[tracker?.selection!!.first().toInt()].name
+                        id = models[tracker?.selection!!.first().toInt()].id
                     }
                     doneButton.isEnabled = items == 1
                 }

@@ -14,6 +14,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.gamesofni.shart.data.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -231,15 +232,21 @@ class CropActivity : AppCompatActivity() {
     if (requestCode == SECOND_ACTIVITY_REQUEST_CODE) {
       if (resultCode == Activity.RESULT_OK) {
 
-        // Get String data from Intent
-        val modelName = data!!.getStringExtra("modelName")
-        val model = Datasource().getByName(modelName!!)
+        // Get data from Intent
+        val modelId = data!!.getIntExtra("modelId", 1)
+
+//        val applicationScope = CoroutineScope(SupervisorJob())
+//        applicationScope.launch {
+        val model = viewModel.retrieveModel(modelId)
+//        }
+        // TODO: try with                     runOnUiThread { fitToScanView.visibility = View.GONE }
+
         // Set text view with string
         val textView = findViewById<TextView>(R.id.model_preview_text)
-        textView.text = modelName
+        textView.text = model.name
         // se preview img
         val imgView = findViewById<ImageView>(R.id.model_preview_img)
-        imgView.setImageDrawable(applicationContext.getDrawable(model.previewResourceId))
+        imgView.setImageDrawable(AppCompatResources.getDrawable(this, model.previewResourceId))
 
         selectedModel = model
 

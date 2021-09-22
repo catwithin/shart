@@ -45,8 +45,9 @@ abstract class ShartRoomDatabase : RoomDatabase() {
         private val scope: CoroutineScope
     ) : RoomDatabase.Callback() {
 
+//        override fun onOpen(db: SupportSQLiteDatabase) {
         override fun onCreate(db: SupportSQLiteDatabase) {
-//        override fun onCreate(db: SupportSQLiteDatabase) {
+//            super.onOpen(db)
             super.onCreate(db)
             INSTANCE?.let { database ->
                 scope.launch {
@@ -62,19 +63,19 @@ abstract class ShartRoomDatabase : RoomDatabase() {
             // Add sample words.
 
             model3dDao.insertAll(
-                Model3d(0,
+                Model3d(1,
                 "Sonic",
                 R.drawable.sonic_preview,
                 "models/sonic/sonic.obj",
                 "models/sonic/textures/Material_baseColor.png"),
 
-                Model3d(1,
+                Model3d(2,
                     "Rafaj Mulberry Warlock", R.drawable.rafaj_preview,
                     "models/rafaj_the_mulberry_warlock/rafaj.obj",
                     "models/rafaj_the_mulberry_warlock/textures/Rafaj1_baseColor.png"
                 ),
 
-                Model3d(2,
+                Model3d(3,
                     "Tibetan fox",
                     R.drawable.tibetan_fox_preview,
                     "models/Tibetan_Hill_Fox/tibetan_fox2" +
@@ -82,36 +83,36 @@ abstract class ShartRoomDatabase : RoomDatabase() {
                     "models/Tibetan_Hill_Fox/Tibetan_Hill_Fox_dif.jpg"
                 ),
 
-                Model3d(3,
+                Model3d(4,
                     "Low poly fox", R.drawable.low_fox_preview, "models/low_fox/low_fox.obj",
                     "models/low_fox/texture.png"
                 ),
 
-                Model3d(4,
+                Model3d(5,
                     "Cyberpunk Apartment", R.drawable.apt_preview, "models/cyberpunk/apt.obj",
                     "models/cyberpunk/textures/UV_TEST_baseColor.png"
                 ),
 
-                Model3d(5,
+                Model3d(6,
                     "Lighthouse",
                     R.drawable.lighthouse_preview,
                     "models/lighthouse/lighthouse_v.obj",
                     "models/lighthouse/textures/lighthouse_low_02_lh_Diffuse2.png"
                 ),
 
-                Model3d(6,
+                Model3d(7,
                     "King sitting on the rock", R.drawable.king_sitting_preview,
                     "models/the-owl-house-king/king.obj",
                     "models/the-owl-house-king/textures/initialShadingGroup_baseColor.png"
                 ),
 
-                Model3d(7,
+                Model3d(8,
                     "King standing", R.drawable.king_standing_preview,
                     "models/king/king2.obj",
                     "models/king/textures/king_baseColor.png"
                 ),
 
-                Model3d(8,
+                Model3d(9,
                     "Owl Albert", R.drawable.owl_albert_preview,
                     "models/owl_house_albert_hilt/owl_staff_sm.obj",
                     "models/the-owl-house-king/textures/initialShadingGroup_baseColor.png"
@@ -130,6 +131,7 @@ abstract class ShartRoomDatabase : RoomDatabase() {
 //                ShartObject(5, 33, 33, 0, false),
 //                ShartObject(6, 39, 39, 0, false),
                 ShartObject(3, 0, 0, 0, false),
+                ShartObject(1, 1, 1, 0, false),
             )
 
         }
@@ -227,9 +229,9 @@ class Datasource {
         return list3dModels
     }
 
-    fun getByName(name: String): Model3d {
-        return list3dModels.first { model -> model.name == name }
-    }
+//    fun getByName(name: String): Model3d {
+//        return list3dModels.first { model -> model.name == name }
+//    }
 
 }
 
